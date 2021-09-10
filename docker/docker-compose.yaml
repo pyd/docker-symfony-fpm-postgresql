@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: pyd_symfony_postgres
+    image: postgres
+    restart: always
+    volumes:
+      - ${HOST_DB_DATA_PATH}:/var/lib/postgresql/data
+    env_file:
+      - .env
+  pgadmin:
+    container_name: pyd_symfony_pgadmin
+    image: dpage/pgadmin4:5.6
+    restart: always
+    volumes:
+      - ${HOST_PGADMIN_DATA_PATH}:/var/lib/pgadmin
+    env_file:
+      - .env
+    ports:
+      - "${PGADMIN_EXPOSED_PORT}:80"
+    depends_on:
+      - db
+  php:
+    container_name: pyd_symfony_php
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+      args:
+        GIT_USER_NAME: $GIT_USER_NAME
+        GIT_USER_EMAIL: $GIT_USER_EMAIL
+    volumes:
+      - ${HOST_APP_PATH}:${CONTAINER_APP_PATH}
+    depends_on:
+      - db
+  nginx:
+    container_name: pyd_symfony_nginx
+    build: ./nginx
+    volumes_from:
+      - php
+    env_file:
+      - .env
+    ports:
+      - "${NGINX_EXPOSED_PORT}:80"
+    depends_on:
+      - php
