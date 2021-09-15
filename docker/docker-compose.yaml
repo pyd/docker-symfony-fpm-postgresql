@@ -31,6 +31,9 @@ services:
         GIT_USER_EMAIL: $GIT_USER_EMAIL
     volumes:
       - ${HOST_APP_PATH}:${CONTAINER_APP_PATH}
+    # php framework may use env vars e.g. for database connection
+    env_file:
+      - .env
     depends_on:
       - db
   nginx:
