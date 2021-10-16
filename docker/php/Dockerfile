@@ -9,6 +9,11 @@ RUN apk update && apk add --no-cache \
   && docker-php-ext-enable intl \
   && docker-php-ext-install opcache
 
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+  && pecl install xdebug-3.1.0 \
+  && docker-php-ext-enable xdebug \
+  && apk del -f .build-deps
+
 # installing pdo_pgsql returns an error:
 #   checking for pg_config... not found
 #   configure: error: Cannot find libpq-fe.h. Please specify correct PostgreSQL installation path
@@ -20,6 +25,7 @@ RUN apk add postgresql-dev \
 
 RUN ln -s /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
 COPY ./conf.d/app.ini /usr/local/etc/php/conf.d/app.ini
+COPY ./conf.d/xdebug.ini /usr/local/etc/php/conf.d/zzz-xdebug.ini
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 

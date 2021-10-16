@@ -26,7 +26,9 @@ In the /etc/subgid file create a mapping between the unprivileged group in host 
     $ git clone --depth 1 https://github.com/pyd/docker-symfony-fpm-postgresql.git .
 <br>
 
-### 2. set GIT_USER_NAME and GIT_USER_EMAIL in the /path/to/project/docker/.env file
+### 2. Configure
+- /path/to/project/docker/.env file: set GIT_USER_NAME and GIT_USER_EMAIL
+- /path/to/project/docker/php/conf.d/xdebug.ini: customize config, like mode, log, idekey...
 <br>
 
 ### 3. run the containers
